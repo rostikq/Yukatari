@@ -18,6 +18,7 @@ add_executable(Yukatari main.cpp
         src/core/Application.cpp
         src/core/Application.h
         src/Debug.h
-        src/core/Timer.h)
+        src/core/Timer.h
+        src/core/State.h)
 
 target_link_libraries(Yukatari sfml-graphics sfml-window sfml-system sfml-network)

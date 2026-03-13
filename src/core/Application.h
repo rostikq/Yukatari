@@ -9,6 +9,7 @@
 #include <SFML/Window.hpp>
 #include <SFML/Network.hpp>
 
+#include "State.h"
 #include "Timer.h"
 
 #pragma pack(1)
@@ -19,10 +20,14 @@ class Application {
 
     Timer m_timer;
 
-    float m_lastDeltaTime;
+
+    float m_lastDeltaTime = 0;
     int m_maxFramerate;
 
     sf::RenderWindow* m_windowPtr;
+    State* m_statePtr;
+
+    void render();
 
     void run();
 
