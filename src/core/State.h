@@ -5,13 +5,13 @@
 #ifndef YUKATARI_STATE_H
 #define YUKATARI_STATE_H
 
-class Application;
+#include "Application.h"
 
 class State {
 protected:
-    Application m_application;
+    Application& m_application;
 public:
-    State(const Application& application) : m_application(application) {
+    State(Application& application) : m_application(application) {
     }
     virtual ~State() = default;
 

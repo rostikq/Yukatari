@@ -9,10 +9,12 @@
 #include <SFML/Window.hpp>
 #include <SFML/Network.hpp>
 
-#include "State.h"
+#include "IEvent.h"
+#include "NetworkManager.h"
 #include "Timer.h"
 
-#pragma pack(1)
+
+class State;
 
 class Application {
     bool m_initSuccess;
@@ -20,12 +22,14 @@ class Application {
 
     Timer m_timer;
 
-
     float m_lastDeltaTime = 0;
     int m_maxFramerate;
 
-    sf::RenderWindow* m_windowPtr;
-    State* m_statePtr;
+    sf::RenderWindow* m_windowPtr = nullptr;
+    State* m_statePtr = nullptr;
+    NetworkManager m_networkManager;
+
+    void test_eventCallback(float yo);
 
     void render();
 

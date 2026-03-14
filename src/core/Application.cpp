@@ -3,15 +3,17 @@
 //
 
 #include "Application.h"
+#include "State.h"
 
 #include <format>
+#include <functional>
 #include <iostream>
 #include <thread>
 #include <math.h>
 #include "../Debug.h"
 
 Application::Application(unsigned short width, unsigned short height, const char *title, int maxFramerate)
-    :m_timer(), m_maxFramerate(maxFramerate){
+    : m_timer(), m_maxFramerate(maxFramerate), m_networkManager() {
     DEBUG_CLOG(this, "Initializing application...");
 
     m_windowPtr = new sf::RenderWindow(sf::VideoMode({width, height}), title);
@@ -38,6 +40,7 @@ void Application::start() {
 }
 
 void Application::render() {
+    DEBUG_CLOG(this, "Render thread created");
     m_windowPtr->setActive(true);
 
     while (m_windowPtr->isOpen() && m_isRunning) {
@@ -53,6 +56,14 @@ void Application::run() {
     m_windowPtr->setActive(false);
     std::thread renderThread(&Application::render, this);
 
+    DEBUG_CLOG(this, "Please enter IP address:");
+    unsigned short port;
+    std::string ip;
+    std::cin >> ip;
+    DEBUG_CLOG(this, "Please enter port:");
+    std::cin >> port;
+    m_networkManager.connect(ip.c_str(), port);
+
     while (m_windowPtr->isOpen() && m_isRunning) {
         m_timer.reset();
         while (const std::optional<sf::Event> event = m_windowPtr->pollEvent()) {
@@ -66,4 +77,10 @@ void Application::run() {
 
         m_lastDeltaTime = m_timer.getPassedTimeInSeconds();
     }
+
+    renderThread.join();
+}
+
+void Application::test_eventCallback(float yo) {
+
 }
