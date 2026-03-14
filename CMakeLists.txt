@@ -25,6 +25,10 @@ add_executable(Yukatari main.cpp
         src/core/EventManager.cpp
         src/core/EventManager.h
         src/core/NetworkManager.cpp
-        src/core/NetworkManager.h)
+        src/core/NetworkManager.h
+        src/game/common/networking/PacketHeader.h
+        src/game/common/networking/PacketPing.h
+        src/game/server/ServerState.cpp
+        src/game/server/ServerState.h)
 
 target_link_libraries(Yukatari sfml-graphics sfml-window sfml-system sfml-network)

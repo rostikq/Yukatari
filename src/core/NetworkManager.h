@@ -8,7 +8,6 @@
 #include "IObserver.h"
 #include "SFML/Network/IpAddress.hpp"
 #include "SFML/Network/UdpSocket.hpp"
-#include "SFML/Window/Event.hpp"
 
 
 class NetworkManager : public IObserver, public EventManager {
