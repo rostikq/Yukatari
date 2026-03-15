@@ -42,6 +42,12 @@ public:
     ~Application();
 
     void start();
+    void setState(State* state) {
+        m_statePtr = state;
+    }
+
+    NetworkManager& getNetworkManager(){ return m_networkManager; }
+    float getDeltaTime() const { return m_lastDeltaTime; }
 };
 
 

@@ -22,7 +22,7 @@ public:
     NetworkManager();
     ~NetworkManager() = default;
 
-    void connect(const char* ipAddress, int port);
+    void connect(sf::IpAddress ipAddress, unsigned int port);
     void send(sf::Packet& packet);
     void disconnect();
 

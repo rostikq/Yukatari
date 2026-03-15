@@ -56,14 +56,6 @@ void Application::run() {
     m_windowPtr->setActive(false);
     std::thread renderThread(&Application::render, this);
 
-    DEBUG_CLOG(this, "Please enter IP address:");
-    unsigned short port;
-    std::string ip;
-    std::cin >> ip;
-    DEBUG_CLOG(this, "Please enter port:");
-    std::cin >> port;
-    m_networkManager.connect(ip.c_str(), port);
-
     while (m_windowPtr->isOpen() && m_isRunning) {
         m_timer.reset();
         while (const std::optional<sf::Event> event = m_windowPtr->pollEvent()) {

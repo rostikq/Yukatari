@@ -7,6 +7,7 @@
 #include <iostream>
 
 #include "../Debug.h"
+#include "../game/common/networking/PacketHeader.h"
 #include "SFML/Network/Packet.hpp"
 
 NetworkManager::NetworkManager() :  m_port(0) {
@@ -14,13 +15,13 @@ NetworkManager::NetworkManager() :  m_port(0) {
     DEBUG_CLOG(this, "Network Manager created successfully");
 }
 
-void NetworkManager::connect(const char *ipAddress, int port) {
+void NetworkManager::connect(sf::IpAddress ipAddress, unsigned int port) {
     if (m_socket.bind(port) != sf::Socket::Status::Done) {
-        DEBUG_CLOG(this, "Binding socket failed");
-        return;
+        DEBUG_CLOG(this, "Binding socket failed. Probably, port is already opened?");
     }
-    DEBUG_CLOG(this, std::format("Connecting successfully to {}:{}", ipAddress, port));
-    m_serverIp = sf::IpAddress::resolve(ipAddress);
+    DEBUG_CLOG(this, std::format("Connecting successfully to {}:{}", ipAddress.toString(), port));
+    m_socket.setBlocking(false);
+    m_serverIp = ipAddress;
     m_port = port;
     m_isConnected = true;
 }
@@ -46,8 +47,22 @@ void NetworkManager::pollPackets() {
     if (!m_isConnected) return;
     sf::Packet packet;
 
+    unsigned short port;
     std::optional<sf::IpAddress> sender;
-    while (m_socket.receive(packet,  sender, m_port) == sf::Socket::Status::Done) {
+    while (true) {
+        packet.clear();
 
+        if (m_socket.receive(packet, sender, port) != sf::Socket::Status::Done) {
+            break;
+        }
+
+        PacketHeader header;
+        packet >> header;
+        switch (header.type) {
+            case PacketType::PING: {
+                DEBUG_CLOG(this, "PONG packet received from server!");
+            }
+                break;
+        }
     }
 }
