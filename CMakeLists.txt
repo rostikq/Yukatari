@@ -37,6 +37,12 @@ add_executable(Yukatari main.cpp
         src/game/common/World.h
         src/game/common/world/Tile.h
         src/game/common/Camera.cpp
-        src/game/common/Camera.h)
+        src/game/common/Camera.h
+        src/game/common/world/MapInfo.h
+        src/game/server/networking/PacketWorldLoad.h
+        src/game/common/WorldRenderer.cpp
+        src/game/common/WorldRenderer.h
+        src/game/client/events/EventWorldLoad.h
+        src/game/common/events/EventApplicationTerminate.h)
 
 target_link_libraries(Yukatari sfml-graphics sfml-window sfml-system sfml-network)

@@ -11,6 +11,7 @@ void EventManager::removeObserver(IObserver &observer) {
         for (auto it = m_observers.begin(); it != m_observers.end(); ++it) {
                 if (*it == &observer) {
                         m_observers.erase(it);
+                        return;
                 }
         }
 }

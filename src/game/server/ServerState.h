@@ -8,6 +8,7 @@
 #include "../../core/State.h"
 #include "../common/Camera.h"
 #include "../common/World.h"
+#include "../common/WorldRenderer.h"
 
 
 class ServerState : public State{
@@ -17,6 +18,7 @@ private:
     bool m_isConnected;
 
     World m_world;
+    WorldRenderer m_worldRenderer;
     Camera m_camera;
     sf::RenderWindow* m_window = nullptr;
 
@@ -26,6 +28,8 @@ private:
     sf::ConvexShape m_tileShape;
 
     std::vector<Client> m_clients;
+
+
 public:
     ServerState(Application& application);
     ~ServerState();

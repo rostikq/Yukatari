@@ -7,7 +7,9 @@
 #include <iostream>
 
 #include "../Debug.h"
+#include "../game/client/events/EventWorldLoad.h"
 #include "../game/common/networking/PacketHeader.h"
+#include "../game/common/world/MapInfo.h"
 #include "SFML/Network/Packet.hpp"
 
 NetworkManager::NetworkManager() :  m_port(0) {
@@ -60,9 +62,17 @@ void NetworkManager::pollPackets() {
         packet >> header;
         switch (header.type) {
             case PacketType::PING: {
-                DEBUG_CLOG(this, "PONG packet received from server!");
+                //DEBUG_CLOG(this, "PONG packet received from server!");
             }
                 break;
+            case PacketType::SC_WORLD_LOAD: {
+                MapInfo mapInfo;
+                packet >> mapInfo;
+                DEBUG_CLOG(this, "SC_WORLD_LOAD packet received from server!");
+                EventWorldLoad wlEvent;
+                wlEvent.mapInfo = mapInfo;
+                publish(wlEvent);
+            }break;
         }
     }
 }

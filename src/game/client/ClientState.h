@@ -5,13 +5,22 @@
 #ifndef YUKATARI_CLIENTSTATE_H
 #define YUKATARI_CLIENTSTATE_H
 #include "../../core/State.h"
+#include "../common/Camera.h"
+#include "../common/World.h"
+#include "../common/WorldRenderer.h"
 
 
-class ClientState final: public State {
+class ClientState final: public State, public IObserver {
     NetworkManager& m_networkManager;
-    sf::Window* m_window = nullptr;
+    sf::RenderWindow* m_window = nullptr;
     sf::IpAddress m_serverIp;
     unsigned short m_serverPort;
+
+    World m_world;
+    WorldRenderer m_worldRenderer;
+
+    Camera m_camera;
+
     float pingTime = 1.0f;
 public:
     ClientState(Application& app);
@@ -21,6 +30,10 @@ public:
     void update(float dt) override;
     void inputProcess(float dt) override;
     void render(float dt) override;
+
+    void terminate();
+
+    void onEvent(IEvent &event) override;
 };
 
 

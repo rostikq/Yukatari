@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "SFML/System/Vector2.hpp"
+#include "world/MapInfo.h"
 #include "world/Tile.h"
 
 
@@ -19,6 +20,13 @@ public:
     size_t mapSizeY = 128;
     TileType *map = nullptr;
     std::vector<sf::Vector2i> spawnTiles;
+
+    MapInfo mapInfo;
+
+    void loadMap(MapInfo &mapInfo);
+
+    MapInfo getMapInfo();
+
 };
 
 

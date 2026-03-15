@@ -11,6 +11,7 @@
 #include <thread>
 #include <math.h>
 #include "../Debug.h"
+#include "../game/common/events/EventApplicationTerminate.h"
 
 Application::Application(unsigned short width, unsigned short height, const char *title, int maxFramerate)
     : m_timer(), m_maxFramerate(maxFramerate), m_networkManager() {

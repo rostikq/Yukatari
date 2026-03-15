@@ -11,7 +11,7 @@
 #include "../../PerlinNoise.hpp"
 #include "../../Debug.h"
 
-#define MAP_SEED 67676767;
+#define MAP_SEED 696969696969;
 
 World::World() {
     map = new TileType[mapSizeY * mapSizeX];
@@ -49,8 +49,32 @@ World::World() {
 
         }
     }
+
+    mapInfo.mapSizeX = mapSizeX;
+    mapInfo.mapSizeY = mapSizeY;
+    for (size_t i = 0; i < mapSizeY * mapSizeX; i++) {
+        mapInfo.info.push_back((uint8_t)map[i]);
+    }
+}
+
+MapInfo World::getMapInfo() {
+    mapInfo.info.resize(mapSizeY * mapSizeX);
+    for (size_t i = 0; i < mapSizeY * mapSizeX; i++) {
+        mapInfo.info.at(i) = (uint8_t)map[i];
+    }
+    return mapInfo;
 }
 
 World::~World() {
     delete map;
+}
+
+void World::loadMap(MapInfo &mapInfo) {
+    mapSizeY = mapInfo.mapSizeY;
+    mapSizeX = mapInfo.mapSizeX;
+    delete map;
+    map = new TileType[mapSizeY * mapSizeX];
+    for (size_t i = 0; i < mapSizeY * mapSizeX; i++) {
+        map[i] = (TileType)mapInfo.info[i];
+    }
 }

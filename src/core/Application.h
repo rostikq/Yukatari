@@ -16,7 +16,7 @@
 
 class State;
 
-class Application {
+class Application : public EventManager {
     bool m_initSuccess;
     bool m_isRunning;
 

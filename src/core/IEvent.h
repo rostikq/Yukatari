@@ -6,7 +6,7 @@
 #define YUKATARI_EVENT_H
 
 struct IEvent {
-    virtual ~IEvent() = 0;
+    virtual ~IEvent() = default;
 };
 
 
