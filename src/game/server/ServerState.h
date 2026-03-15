@@ -6,6 +6,8 @@
 #define YUKATARI_SERVERSTATE_H
 #include "Client.h"
 #include "../../core/State.h"
+#include "../common/Camera.h"
+#include "../common/World.h"
 
 
 class ServerState : public State{
@@ -13,6 +15,15 @@ private:
     sf::UdpSocket m_udpSocket;
     unsigned short m_port;
     bool m_isConnected;
+
+    World m_world;
+    Camera m_camera;
+    sf::RenderWindow* m_window = nullptr;
+
+    float m_scale = 1;
+    float m_tileSizeX = 1;
+    float m_tileSizeY = 0.5f;
+    sf::ConvexShape m_tileShape;
 
     std::vector<Client> m_clients;
 public:

@@ -12,7 +12,10 @@
 #include "SFML/Network/Packet.hpp"
 
 enum PacketType : uint8_t {
-    PING
+    PING,
+    CS_CLIENT_CONNECT,
+    CS_CLIENT_DISCONNECT,
+    SC_WORLD_LOAD
 };
 
 struct PacketHeader {

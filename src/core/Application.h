@@ -48,6 +48,7 @@ public:
 
     NetworkManager& getNetworkManager(){ return m_networkManager; }
     float getDeltaTime() const { return m_lastDeltaTime; }
+    sf::RenderWindow* getWindowPtr() {return m_windowPtr;}
 };
 
 

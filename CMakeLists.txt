@@ -32,6 +32,11 @@ add_executable(Yukatari main.cpp
         src/game/server/ServerState.h
         src/game/server/Client.h
         src/game/client/ClientState.cpp
-        src/game/client/ClientState.h)
+        src/game/client/ClientState.h
+        src/game/common/World.cpp
+        src/game/common/World.h
+        src/game/common/world/Tile.h
+        src/game/common/Camera.cpp
+        src/game/common/Camera.h)
 
 target_link_libraries(Yukatari sfml-graphics sfml-window sfml-system sfml-network)
