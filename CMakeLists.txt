@@ -43,6 +43,25 @@ add_executable(Yukatari main.cpp
         src/game/common/WorldRenderer.cpp
         src/game/common/WorldRenderer.h
         src/game/client/events/EventWorldLoad.h
-        src/game/common/events/EventApplicationTerminate.h)
+        src/game/common/events/EventApplicationTerminate.h
+        src/game/common/world/Entity.cpp
+        src/game/common/world/Entity.h
+        src/game/common/world/IdGenerator.cpp
+        src/game/common/world/IdGenerator.h
+        src/game/server/networking/PacketEntitiesLoad.h
+        src/game/client/events/EventEntitiesLoad.h
+        src/game/common/world/EntityType.h
+        src/game/common/resources/ResourceManager.cpp
+        src/game/common/resources/ResourceManager.h
+        src/game/common/resources/TextureName.h
+        src/game/client/networking/PacketInputUpdate.h
+        src/game/common/world/Player.cpp
+        src/game/common/world/Player.h
+        src/game/common/world/IDynamic.h
+        src/game/common/InputInfo.h
+        src/game/server/networking/PacketEntityTransformUpdate.h
+        src/game/server/events/EventEntityTransformUpdate.h
+        src/game/server/networking/PacketAttachPlayer.h
+        src/game/client/events/EventAttachPlayer.h)
 
 target_link_libraries(Yukatari sfml-graphics sfml-window sfml-system sfml-network)

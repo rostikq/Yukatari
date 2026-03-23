@@ -7,9 +7,16 @@
 #include <iostream>
 
 #include "../Debug.h"
+#include "../game/client/events/EventAttachPlayer.h"
+#include "../game/client/events/EventEntitiesLoad.h"
 #include "../game/client/events/EventWorldLoad.h"
 #include "../game/common/networking/PacketHeader.h"
+#include "../game/common/world/Entity.h"
 #include "../game/common/world/MapInfo.h"
+#include "../game/server/events/EventEntityTransformUpdate.h"
+#include "../game/server/networking/PacketAttachPlayer.h"
+#include "../game/server/networking/PacketEntitiesLoad.h"
+#include "../game/server/networking/PacketEntityTransformUpdate.h"
 #include "SFML/Network/Packet.hpp"
 
 NetworkManager::NetworkManager() :  m_port(0) {
@@ -72,6 +79,35 @@ void NetworkManager::pollPackets() {
                 EventWorldLoad wlEvent;
                 wlEvent.mapInfo = mapInfo;
                 publish(wlEvent);
+            }break;
+            case PacketType::SC_ENTITIES_LOAD: {
+                PacketEntitiesLoad snapshotPacket;
+                packet << header;
+                packet >> snapshotPacket;
+
+                DEBUG_CLOG(this, "SC_ENTITIES_LOAD packet received from server!");
+                EventEntitiesLoad elEvent;
+                elEvent.snapshots = snapshotPacket.entities;
+                publish(elEvent);
+            }break;
+            case PacketType::SC_ENT_TRANSFORM_UPDATE: {
+                PacketEntityTransformUpdate transformUpdate;
+                packet >> transformUpdate;
+                EventEntityTransformUpdate etuEvent;
+                etuEvent.id = transformUpdate.id;
+                etuEvent.posX    = transformUpdate.posX;
+                etuEvent.posY    = transformUpdate.posY;
+                etuEvent.posZ    = transformUpdate.posZ;
+                etuEvent.rotation = transformUpdate.rotation;
+                publish (etuEvent);
+                DEBUG_CLOG(this, "SC_ENT_TRANSFORM_UPDATE packet received from server!");
+            }break;
+            case PacketType::SC_ATTACH_PLAYER: {
+                PacketAttachPlayer apPacket {};
+                packet >> apPacket;
+                EventAttachPlayer apEvent;
+                apEvent.id = apPacket.id;
+                publish(apEvent);
             }break;
         }
     }

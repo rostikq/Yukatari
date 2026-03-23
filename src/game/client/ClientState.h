@@ -20,6 +20,9 @@ class ClientState final: public State, public IObserver {
     WorldRenderer m_worldRenderer;
 
     Camera m_camera;
+    InputInfo m_lastInputInfo;
+
+    Entity* m_playerEntity = nullptr;
 
     float pingTime = 1.0f;
 public:

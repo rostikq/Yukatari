@@ -9,11 +9,17 @@
 
 #include "../common/events/EventApplicationTerminate.h"
 #include "../common/networking/PacketHeader.h"
+#include "../server/events/EventEntityTransformUpdate.h"
+#include "../server/networking/PacketEntitiesLoad.h"
+#include "events/EventAttachPlayer.h"
+#include "events/EventEntitiesLoad.h"
 #include "events/EventWorldLoad.h"
+#include "networking/PacketInputUpdate.h"
 
 ClientState::ClientState(Application &app) : State(app), m_networkManager(app.getNetworkManager()),
                                              m_serverIp(0,0,0,0),
-                                             m_camera(){
+                                             m_camera(),
+                                             m_lastInputInfo(0,0){
     DEBUG_CLOG(this, "Please enter Ip and Port:");
 
     m_networkManager.addObserver(*this);
@@ -40,6 +46,10 @@ ClientState::~ClientState() {
 }
 
 void ClientState::update(float dt) {
+    m_camera.setFollowEntity(m_playerEntity);
+
+    m_camera.update(dt);
+
     pingTime -= dt;
     if (pingTime <= 0) {
         sf::Packet packet;
@@ -61,38 +71,45 @@ void ClientState::render(float dt) {
 }
 
 void ClientState::inputProcess(float dt) {
-    float speed = 5;
+    float speed = 200;
+    float cameraScale = m_camera.getScale();
 
-    sf::Vector2f moveVector;
+    InputInfo currentMove {0,0};
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
-        moveVector.x += -1;
-        moveVector.y += 1;
-        moveVector = moveVector.normalized();
+        currentMove.x += -1;
+        currentMove.y += 1;
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-        moveVector.x += 1;
-        moveVector.y += -1;
-        moveVector = moveVector.normalized();
+        currentMove.x += 1;
+        currentMove.y += -1;
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
 
-        moveVector.x += -1;
-        moveVector.y += -1;
-        moveVector = moveVector.normalized();
+        currentMove.x += -1;
+        currentMove.y += -1;
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)){
 
-        moveVector.x += 1;
-        moveVector.y += 1;
-        moveVector = moveVector.normalized();
+        currentMove.x += 1;
+        currentMove.y += 1;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Add)) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Period)) {
         m_camera.setScale(m_camera.getScale() + 0.1 * dt);
     }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Subtract)) {
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Comma)) {
         m_camera.setScale(m_camera.getScale() - 0.1 * dt);
     }
-    m_camera.move(moveVector * dt * speed);
+
+    if (currentMove != m_lastInputInfo) {
+        m_lastInputInfo = currentMove;
+        PacketInputUpdate inputUpdate;
+        inputUpdate.x = currentMove.x;
+        inputUpdate.y = currentMove.y;
+        sf::Packet packet;
+        packet << inputUpdate;
+        std::cout << (int)inputUpdate.x << " " << (int)inputUpdate.y << "\n";
+        m_networkManager.send(packet);
+    }
 }
 
 void ClientState::onEvent(IEvent &event) {
@@ -104,6 +121,25 @@ void ClientState::onEvent(IEvent &event) {
     if (auto appTerminateEvent = dynamic_cast<EventApplicationTerminate*>(&event)) {
         std::cout << "Received terminate event\n";
         terminate();
+    }
+    if (auto entityLoadEvent = dynamic_cast<EventEntitiesLoad*>(&event)) {
+        std::cout << "Received entity load event\n";
+        m_world.loadEntities(entityLoadEvent->snapshots);
+    }
+    if (auto entityTransformUpdateEvent = dynamic_cast<EventEntityTransformUpdate*>(&event)) {
+        std::cout << "Received entity transform update event\n";
+        if (Entity* ent = m_world.getEntity(entityTransformUpdateEvent->id)) {
+            ent->setPosition({entityTransformUpdateEvent->posX,
+            entityTransformUpdateEvent->posY,
+            entityTransformUpdateEvent->posZ});
+            ent->setRotation(entityTransformUpdateEvent->rotation);
+        }
+    }
+    if (auto playerAttachEvent = dynamic_cast<EventAttachPlayer*>(&event)) {
+        std::cout << "Received player attach event\n";
+        if (Entity* ent = m_world.getEntity(playerAttachEvent->id)) {
+            m_playerEntity = ent;
+        }
     }
 }
 

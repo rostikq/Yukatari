@@ -12,6 +12,7 @@
 #include <math.h>
 #include "../Debug.h"
 #include "../game/common/events/EventApplicationTerminate.h"
+#include "../game/common/resources/ResourceManager.h"
 
 Application::Application(unsigned short width, unsigned short height, const char *title, int maxFramerate)
     : m_timer(), m_maxFramerate(maxFramerate), m_networkManager() {
@@ -24,6 +25,8 @@ Application::Application(unsigned short width, unsigned short height, const char
     }
     DEBUG_CLOG(this, "Window creation successfull");
     m_windowPtr->setFramerateLimit(m_maxFramerate);
+
+    ResourceManager::getInstance();
 
     m_initSuccess = true;
 }

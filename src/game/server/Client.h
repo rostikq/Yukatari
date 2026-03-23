@@ -10,6 +10,8 @@
 struct Client {
     sf::IpAddress ipAddress;
     unsigned int id;
+    unsigned short port;
+    unsigned int entityId;
 };
 
 

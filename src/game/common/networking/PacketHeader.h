@@ -15,7 +15,11 @@ enum PacketType : uint8_t {
     PING,
     CS_CLIENT_CONNECT,
     CS_CLIENT_DISCONNECT,
-    SC_WORLD_LOAD
+    SC_WORLD_LOAD,
+    SC_ENTITIES_LOAD,
+    CS_INPUT_UPDATE,
+    SC_ENT_TRANSFORM_UPDATE,
+    SC_ATTACH_PLAYER
 };
 
 struct PacketHeader {

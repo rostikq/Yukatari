@@ -4,6 +4,8 @@
 
 #include "WorldRenderer.h"
 
+#include "resources/ResourceManager.h"
+
 WorldRenderer::WorldRenderer() {
     m_tileShape.setPointCount(4);
 
@@ -11,6 +13,9 @@ WorldRenderer::WorldRenderer() {
     m_tileShape.setPoint(1, {0, -m_scale/4});
     m_tileShape.setPoint(2, {m_scale/2, 0});
     m_tileShape.setPoint(3, {0, m_scale/4});
+
+    m_circleShape.setFillColor(sf::Color::Red);
+    m_circleShape.setSize({1, 1});
 }
 
 void WorldRenderer::draw(sf::RenderWindow *window, World &world, Camera &camera) {
@@ -24,43 +29,52 @@ void WorldRenderer::draw(sf::RenderWindow *window, World &world, Camera &camera)
 
     m_tileShape.setScale({m_scale, m_scale});
 
-    for (int wrldX=0; wrldX<world.mapSizeX;++wrldX) {
-        for (int wrldY=0; wrldY<world.mapSizeY;++wrldY) {
-            float aposX = wrldX - camera.getPosition().x;
-            float aposY = wrldY - camera.getPosition().y;
+    sf::VertexArray& vertexArray = world.getRenderVertexArray();
+    sf::RenderStates renderStates;
 
-            float projectedX = (aposX - aposY) * m_scale / 2.0f;
-            float projectedY = (aposX + aposY) * m_scale / 4.0f;
+    sf::Vector2f camPos = camera.getPosition();
+
+    float cameraX = (camPos.x - camPos.y) / 2;
+    float cameraY = (camPos.x + camPos.y) / 4;
+
+    renderStates.transform.translate({centerX, centerY});
+    renderStates.transform.scale({m_scale, m_scale});
+    renderStates.transform.translate({-cameraX, -cameraY});
+
+
+    if (m_scale < m_lod_threshold)
+    renderStates.texture = ResourceManager::getInstance().getTexture(2);
+    else {
+        renderStates.texture = ResourceManager::getInstance().getTexture(1);
+    }
+
+    window->draw(vertexArray, renderStates);
+
+    auto& entities = world.getEntities();
+
+    if (!entities.empty()) {
+        for (auto it = entities.begin(); it != entities.end(); ++it) {
+            if ((*it).second == nullptr) return;
+            Entity* entity = (*it).second;
+            sf::Vector3f point = entity->getPosition();
+            point.x -= camera.getPosition().x;
+            point.y -= camera.getPosition().y;
+
+
+            float projectedX = (point.x - point.y) * m_scale / 2.0f;
+            float projectedY = (point.x + point.y) * m_scale / 4.0f;
 
             projectedX += centerX;
             projectedY += centerY;
 
-            if (projectedX < 0 || projectedX > window->getSize().x || projectedY < 0 || projectedY > window->getSize().y)
-                continue;
-            m_tileShape.setPosition({projectedX, projectedY});
+            m_circleShape.setPosition({projectedX, projectedY});
+            m_circleShape.setScale({m_scale, m_scale});
 
-            sf::Color color;
-            switch (world.map[wrldY * world.mapSizeY + wrldX]) {
-                case EMPTY:
-                    color = sf::Color::White;
-                    break;
-                case GRASS:
-                    color = sf::Color::Green;
-                    break;
-                case WATER:
-                    color = sf::Color::Blue;
-                    break;
-                case SAND:
-                    color = sf::Color::Yellow;
-                    break;
-                default:
-                    color = sf::Color::White;
-                    break;
-            }
-            m_tileShape.setFillColor(color);
-
-            window->draw(m_tileShape);
-
+            window->draw(m_circleShape);
         }
     }
+}
+
+sf::Vector2f WorldRenderer::projectOnDisplay(sf::Vector3f point) {
+
 }

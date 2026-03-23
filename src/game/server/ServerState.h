@@ -11,7 +11,7 @@
 #include "../common/WorldRenderer.h"
 
 
-class ServerState : public State{
+class ServerState : public State, public IObserver{
 private:
     sf::UdpSocket m_udpSocket;
     unsigned short m_port;
@@ -22,6 +22,7 @@ private:
     Camera m_camera;
     sf::RenderWindow* m_window = nullptr;
 
+    float m_maxTPS = 30;
     float m_scale = 1;
     float m_tileSizeX = 1;
     float m_tileSizeY = 0.5f;
@@ -37,6 +38,8 @@ public:
     void update(float dt) override;
     void inputProcess(float dt) override;
     void render(float dt) override;
+
+    void onEvent(IEvent &event) override;
 };
 
 
